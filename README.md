@@ -2,6 +2,8 @@
 
 > A database for an imaginary hotel chain.
 
+By: Joshua Haddock
+
 ## Table of Contents
 
 * [General Info](#general-information)
