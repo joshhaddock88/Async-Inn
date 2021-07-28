@@ -21,7 +21,9 @@ By: Joshua Haddock
 
 ## General Information
 
-* For the first part of this lab we are simply creating and ERD model for a made up hotel chain. This a practice in designing the architecture of relational databases.
+1. For the first part of this lab we are simply creating and ERD model for a made up hotel chain. This a practice in designing the architecture of relational databases.
+
+2. For the second day of lab we created out database with models and controllers for Amenities, Rooms, and Hotels. We also created a DbContext for AsyncInn which included modelBuilder.
 
 ## Technologies Used
 
@@ -31,6 +33,7 @@ By: Joshua Haddock
 ## Features
 
 * A completed ERD diagram.
+* Three working models with controllers capable of seeding new data to the database.
 
 ## Media
 
@@ -38,33 +41,43 @@ By: Joshua Haddock
 
 ## Table Explanation
 
-### Location
+### Hotel
 
 Locations is a class which holds the properties Name, City, State, Address, and PhoneNumber. All of these are VarChar except PhoneNumber, which is an int.
 
-### Bookings
+Connected to HotelRoom.
 
-The location feeds into "Bookings" which gives bookings composite keys. Bookings will take in All rooms and the location, and kit keeps track of how many units exist in the hotel, and how many are currently available. It is also being fed from "Specials" which keeps track of all sales etc going on.
+### HotelRoom
 
-### Specials
+Has composite Foreign Key or HotelID and RoomID, and create a composite key called RoomNumber. It has the properties of Rate(decimal) and PetFriendly(bit).
 
-Specails has only a primary key and gives out the amount of discount and the start and end date of the special.
+Connected to Hotel/Room.
 
 ### Room
 
-Room takes in from the enum list "Amenities" and "Room types". It has a nickename property, it's amenities, a boolean telling whether or not it is reserved (which is fed into "Bookings").
+Has an ID, Name(string) and Layout(int). Layout receives data from a connected enum list.
 
-### Room Types
+Is connected to Layout/RoomAmenities.
 
-Room types has the properties of room style, popularity, and size. It feeds all that information into Room via a foreign key.
+### Layout
 
-### Amenities
+List of three room type: Studio, OneBedroom, and TwoBedroom. Connects to Room and nothing else.
 
-Amenities is an enurable list which connects to rooms. It consists primarily of booleans which will tells us either true or false if a room has a specific amenity.
+### RoomAmenities
+
+Feeds into Room. and receives its ID. Also receives Amenities ID.
+
+### Amenity
+
+Simple class with just an ID and a Name property.
 
 ## Setup
 
+Nothing to set up yet.
+
 ## Usage
+
+Educational purposes. This project was built in order to experiment with database creation.
 
 ## Project Status
 
