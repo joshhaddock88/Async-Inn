@@ -1,4 +1,6 @@
 using AsyncInn.Data;
+using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +34,10 @@ namespace AsyncInn
                 options.UseSqlServer(connectionString);
             });
 
+            services.AddTransient<IHotel, HotelService>();
+            services.AddTransient<IRoom, RoomService>();
+            services.AddTransient<IAmenity, AmenityService>();
+
             services.AddControllers();
         }
 
@@ -47,14 +53,12 @@ namespace AsyncInn
 
             app.UseEndpoints(endpoints =>
             {
+
+                endpoints.MapControllers();
+
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync("Hello World!");
-                });
-
-                endpoints.MapGet("/hey", async context =>
-                {
-                    await context.Response.WriteAsync("You made it!");
                 });
             });
         }
