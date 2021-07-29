@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
+using AsyncInn.Models.Interfaces;
 
 namespace AsyncInn.Controllers
 {
@@ -14,31 +15,27 @@ namespace AsyncInn.Controllers
     [ApiController]
     public class HotelsController : ControllerBase
     {
-        private readonly AsyncInnDbContext _context;
+        // _hotel is "hotel service" which uses the actual db context
+        private readonly IHotel _hotel;
 
-        public HotelsController(AsyncInnDbContext context)
+        public HotelsController(IHotel h)
         {
-            _context = context;
+            _hotel = h;
         }
 
         // GET: api/Hotels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
         {
-            return await _context.Hotels.ToListAsync();
+            var list = await _hotel.GetHotels();
+            return Ok(list);
         }
 
         // GET: api/Hotels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Hotel>> GetHotel(int id)
         {
-            var hotel = await _context.Hotels.FindAsync(id);
-
-            if (hotel == null)
-            {
-                return NotFound();
-            }
-
+            var hotel = await _hotel.GetHotel(id);
             return hotel;
         }
 
@@ -52,25 +49,9 @@ namespace AsyncInn.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(hotel).State = EntityState.Modified;
+            var updatedHotel = await _hotel.UpdateHotel(id, hotel);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HotelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(updatedHotel);
         }
 
         // POST: api/Hotels
@@ -78,9 +59,10 @@ namespace AsyncInn.Controllers
         [HttpPost]
         public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
         {
-            _context.Hotels.Add(hotel);
-            await _context.SaveChangesAsync();
+            await _hotel.Create(hotel);
 
+            // Return a 201 Header to browswer
+            // The body of the request will be us running GetStudent(id);
             return CreatedAtAction("GetHotel", new { id = hotel.Id }, hotel);
         }
 
@@ -88,21 +70,8 @@ namespace AsyncInn.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var hotel = await _context.Hotels.FindAsync(id);
-            if (hotel == null)
-            {
-                return NotFound();
-            }
-
-            _context.Hotels.Remove(hotel);
-            await _context.SaveChangesAsync();
-
+            await _hotel.Delete(id);
             return NoContent();
-        }
-
-        private bool HotelExists(int id)
-        {
-            return _context.Hotels.Any(e => e.Id == id);
         }
     }
 }
