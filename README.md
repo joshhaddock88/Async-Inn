@@ -71,6 +71,10 @@ Feeds into Room. and receives its ID. Also receives Amenities ID.
 
 Simple class with just an ID and a Name property.
 
+## Architecture
+
+The site is set up like so: endpoints interact with datasets, each of which has a model that implement GET, POST, PUT, DELETE. This is done through the use of controllers which each implement an interface, and services which implement the same interface. This is all configured in the startup.
+
 ## Setup
 
 Nothing to set up yet.
