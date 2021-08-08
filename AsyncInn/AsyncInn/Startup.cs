@@ -33,12 +33,15 @@ namespace AsyncInn
                 string connectionString = Configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
+            // Dependency Injection Goes Here
 
             services.AddTransient<IHotel, HotelService>();
             services.AddTransient<IRoom, RoomService>();
             services.AddTransient<IAmenity, AmenityService>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
