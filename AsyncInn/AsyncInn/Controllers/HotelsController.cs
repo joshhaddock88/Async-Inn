@@ -18,6 +18,7 @@ namespace AsyncInn.Controllers
         // _hotel is "hotel service" which uses the actual db context
         private readonly IHotel _hotel;
 
+        // Dependency injection will provide me with a suitable database context AND a service that implements the Ihotel interface.
         public HotelsController(IHotel h)
         {
             _hotel = h;

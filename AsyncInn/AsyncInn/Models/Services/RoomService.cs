@@ -33,14 +33,18 @@ namespace AsyncInn.Models.Services
 
         public async Task<List<Room>> GetRooms()
         {
-            var rooms = await _context.Rooms.ToListAsync();
-            return rooms;
+            return await _context.Rooms
+                .Include(c => c.RoomAmenities)
+                .ThenInclude(e => e.Amenity)
+                .ToListAsync();
         }
 
         public async Task<Room> GetRoom(int id)
         {
-            Room room = await _context.Rooms.FindAsync(id);
-            return room;
+            return await _context.Rooms
+                .Include(c => c.RoomAmenities)
+                .ThenInclude(e => e.Amenity)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<Room> UpdateRoom(int id, Room room)
@@ -56,5 +60,25 @@ namespace AsyncInn.Models.Services
             _context.Entry(room).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddAmenity(int roomId, int amenityId)
+        {
+            RoomAmenities RoomAmenity = new RoomAmenities()
+            {
+                AmenityId = amenityId,
+                RoomId = roomId
+            };
+            _context.Entry(RoomAmenity).State = EntityState.Added;
+            await _context.SaveChangesAsync();
+        }
+
+        public Task RemoveAmenity(int roomId, int amenityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*        public async Task RemoveAmenity(int roomId, int amenityId)
+                {           
+                }*/
     }
 }

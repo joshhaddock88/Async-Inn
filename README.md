@@ -25,6 +25,8 @@ By: Joshua Haddock
 
 2. For the second day of lab we created out database with models and controllers for Amenities, Rooms, and Hotels. We also created a DbContext for AsyncInn which included modelBuilder.
 
+3. For the third portion of our lab we created two new models with services and interfaces: RoomAmenities and HotelRoom. Each one is connected to other models. The RoomAmenities takes a room and amenities and holds all of the amenities that apply to a specific room. The HotelRoom model takes in data from the Room and Hotel models and holds data about each room in a specific hotel.
+
 ## Technologies Used
 
 * C# 9.0
