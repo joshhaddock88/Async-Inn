@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

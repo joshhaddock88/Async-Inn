@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncInn.Models.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,21 +9,21 @@ namespace AsyncInn.Models.Interfaces
     public interface IRoom
     {
         // CREATE
-        Task<Room> Create(Room room);
+        Task<RoomDTO> Create(NewRoomDTO room);
 
         // GET ALL
-        Task<List<Room>> GetRooms();
+        Task<List<RoomDTO>> GetRooms();
 
         // GET ONE BY ID
-        Task<Room> GetRoom(int id);
+        Task<RoomDTO> GetRoom(int id);
 
         // UPDATE
         Task<Room> UpdateRoom(int id, Room room);
 
-        // DELETE
-        Task Delete(int id);
-
         Task AddAmenity(int roomId, int amenityId);
         Task RemoveAmenity(int roomId, int amenityId);
+
+        // DELETE
+        Task Delete(int id);
     }
 }

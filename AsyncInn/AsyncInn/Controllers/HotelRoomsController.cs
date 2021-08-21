@@ -14,18 +14,18 @@ namespace AsyncInn.Controllers
 
     [Route("api/[controller]")]
     [ApiController] 
-    public class HotelRoomController : ControllerBase
+    public class HotelRoomsController : ControllerBase
     {
-        private readonly IHotelRoom _hotelRoom;
+        private readonly IHotelRooms _hotelRoom;
 
-        public HotelRoomController(IHotelRoom hr)
+        public HotelRoomsController(IHotelRooms hr)
         {
             _hotelRoom = hr;
         }
 
         // get: api/HotelRoom
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HotelRoom>>> GetHotelRooms()
+        public async Task<ActionResult<IEnumerable<HotelRooms>>> GetHotelRooms()
         {
             var list = await _hotelRoom.GetHotelRooms();
             return Ok(list);
@@ -33,15 +33,15 @@ namespace AsyncInn.Controllers
 
         // GET: api/HotelRooms/5
         [HttpGet("{hotelId}/{roomId}")]
-        public async Task<ActionResult<HotelRoom>> GetHotelRoom(int hotelId, int roomId)
+        public async Task<ActionResult<HotelRooms>> GetHotelRoom(int hotelId, int roomId)
         {
-            HotelRoom hotelRoom = await _hotelRoom.GetHotelRoom(hotelId, roomId);
+            HotelRooms hotelRoom = await _hotelRoom.GetHotelRoom(hotelId, roomId);
             return hotelRoom;
         }
 
         // POST: api/HotelRoom
         [HttpPost]
-        public async Task<ActionResult<HotelRoom>> PostHotelRoom(HotelRoom hotelRoom)
+        public async Task<ActionResult<HotelRooms>> PostHotelRoom(HotelRooms hotelRoom)
         {
             await _hotelRoom.Create(hotelRoom);
             //return a 201 Header
@@ -51,7 +51,7 @@ namespace AsyncInn.Controllers
 
         // PUT: api/HotelRooms/5
         [HttpPut("{hotelId}/{roomId}")]
-        public async Task<IActionResult> PutHotelRoom(int hotelId, int roomId, HotelRoom hotelRoom)
+        public async Task<IActionResult> PutHotelRoom(int hotelId, int roomId, HotelRooms hotelRoom)
         {
             var updatedHotelRoom = await _hotelRoom.UpdateHotelRoom(hotelId, roomId, hotelRoom);
             return Ok(updatedHotelRoom);
