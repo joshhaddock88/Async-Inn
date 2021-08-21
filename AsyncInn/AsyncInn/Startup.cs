@@ -1,6 +1,7 @@
 using AsyncInn.Data;
 using AsyncInn.Models.Interfaces;
 using AsyncInn.Models.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,25 +24,46 @@ namespace AsyncInn
         {
             Configuration = configuration;
         }
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AsyncInnDbContext>(options =>
             {
-                // Our DATABASE_URL from js days
                 string connectionString = Configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(connectionString);
             });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Title = "Async Inn Demo",
+                    Version = "v1"
+                });
+            });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<AsyncInnDbContext>();
             // Dependency Injection Goes Here
 
+            services.AddTransient<IUserService, IdentityUserService>();
             services.AddTransient<IHotel, HotelService>();
             services.AddTransient<IRoom, RoomService>();
             services.AddTransient<IAmenity, AmenityService>();
+            services.AddTransient<JwtTokenService>();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerExtensions.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = JwtTokenService.GetValidationParameters(Configuration);
+            });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +74,20 @@ namespace AsyncInn
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "/api/{documentName}/swagger.json";
+            });
+
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/api.v1/swagger.json", "Async Inn Demo");
+                options.RoutePrefix = "";
+            });
+
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -61,7 +96,7 @@ namespace AsyncInn
 
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync("Welcome to the Async Inn!");
                 });
             });
         }
