@@ -9,10 +9,8 @@ namespace AsyncInn.Models
     public class Amenity
     {
         public int Id { get; set; }
-
-        [Required]
         public string Name { get; set; }
 
-        public RoomAmenities RoomAmenities { get; set; }
+        public List<Room> RoomAmenities { get; set; }
     }
 }

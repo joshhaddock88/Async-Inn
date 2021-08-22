@@ -9,8 +9,8 @@ namespace AsyncInn.Models.DTOs
     {
         public int Id { get; set; }
 
-        public int Room { get; set; }
+        public string Room { get; set; }
 
-        public RoomDTO Hotel { get; set; }
+        public string Hotel { get; set; }
     }
 }
