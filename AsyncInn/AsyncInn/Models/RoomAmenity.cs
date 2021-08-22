@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 
 namespace AsyncInn.Models
 {
-    public class RoomAmenities
+    public class RoomAmenity
     {
         public int AmenityId { get; set; }
 
         public int RoomId { get; set; }
-
-        //Navigation Properties
-        // Specifies our linkages between the tables.
 
         public Amenity Amenity { get; set; }
         public Room Room { get; set; }

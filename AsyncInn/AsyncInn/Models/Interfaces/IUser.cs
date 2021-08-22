@@ -12,6 +12,6 @@ namespace AsyncInn.Models.Interfaces
     {
         public Task<UserDTO> Register(RegisterUserDTO data, ModelStateDictionary modelState);
         public Task<UserDTO> Login(string username, string password);
-        public Task<UserDTO> GetUserAsync(ClaimsPrincipals principal);
+        public Task<UserDTO> GetUserAsync(ClaimsPrincipal principal);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AsyncInn.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AsyncInn.Data
 {
-    public class AsyncInnDbContext : DbContext
+    public class AsyncInnDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Hotel> Hotels { get; set; }
         
@@ -15,9 +17,9 @@ namespace AsyncInn.Data
 
         public DbSet<Amenity> Amenities { get; set; }
 
-        public DbSet<HotelRooms> HotelRooms { get; set; }
+        public DbSet<HotelRoom> HotelRooms { get; set; }
 
-        public DbSet<RoomAmenities> RoomAmenities { get; set; }
+        public DbSet<RoomAmenity> RoomAmenities { get; set; }
 
         public AsyncInnDbContext(DbContextOptions options) : base(options)
         {
@@ -46,13 +48,42 @@ namespace AsyncInn.Data
                 new Amenity { Id = 3, Name = "Pommel Horse" }
             );
 
-            modelBuilder.Entity<RoomAmenities>().HasKey(
-                roomAmenities => new {roomAmenities.RoomId, roomAmenities.AmenityId}
-            );
+            SeedRole(modelBuilder, "Regional manager", "createRoom", "createAmenity", "createHotel",
+                "updateRoom", "updateAmenity", "updateHotel", "deleteRoom", "deleteAmenity", "deleteHotel"
+                );
 
-            modelBuilder.Entity<HotelRooms>().HasKey(
-                hotelRoom => new {hotelRoom.HotelId, hotelRoom.RoomId}
+            SeedRole(modelBuilder, "Property Manager", "createRoom", "createAmenity", "updateRoom", "updateAmenity", "deleteAmenity");
+
+            SeedRole(modelBuilder, "Shift Manager", "createAmenity", "updateRoom", "updateAmeniy", "deleteAmenity");
+
+            modelBuilder.Entity<HotelRoom>().HasKey(
+                roomAmenity => new {roomAmenity.RoomId, roomAmenity.AmenityId}
             );
+        }
+
+        public void SeedRole(ModelBuilder modelBuilder, string roleName, params string[] permission)
+        {
+            var role = new IdentityRole
+            {
+                Id = roleName.ToLower(),
+                Name = roleName,
+                NormalizedName = roleName.ToUpper(),
+                ConcurrencyStamp = Guid.Empty.ToString()
+            };
+
+            modelBuilder.Entity<IdentityRole>().HasData(role);
+
+            var roleClaims = permission.Select(permission =>
+                new IdentityRoleClaim<string>
+                {
+                    Id = 1,
+                    RoleId = role.Id,
+                    ClaimType = "permissions",
+                    ClaimValue = permission
+                }
+            ).ToArray();
+
+            modelBuilder.Entity<IdentityRoleClaim<string>>().HasData(roleClaims);
         }
     }
 }

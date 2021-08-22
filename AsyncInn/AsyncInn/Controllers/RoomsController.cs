@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
 using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AsyncInn.Controllers
 {
@@ -25,7 +27,7 @@ namespace AsyncInn.Controllers
 
         // GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<ActionResult<IEnumerable<RoomDTO>>> GetRooms()
         {
             // You should count the list ...
             var list = await _room.GetRooms();
@@ -34,14 +36,15 @@ namespace AsyncInn.Controllers
 
         // GET: api/Rooms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom(int id)
+        public async Task<ActionResult<RoomDTO>> GetRoom(int id)
         {
-            Room room = await _room.GetRoom(id);
+            RoomDTO room = await _room.GetRoom(id);
             return room;
         }
 
         // PUT: api/Rooms/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "updateRoom")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(int id, Room room)
         {
@@ -57,39 +60,33 @@ namespace AsyncInn.Controllers
 
         // POST: api/Rooms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "createRoom")]
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(Room room)
+        public async Task<ActionResult<RoomDTO>> PostRoom(NewRoomDTO room)
         {
-            await _room.Create(room);
+            RoomDTO newRoom = await _room.Create(room);
 
             // Return a 201 Header to browser
             // the body of the request will be us running GetStudent(id);
-            return CreatedAtAction("GetRoom", new { id = room.Id }, room);
+            return CreatedAtAction("GetRoom", new { id = newRoom.Id }, newRoom);
+        }
+
+        //Update Amenities
+        [Authorize(Policy = "updateRoom")]
+        [HttpPost]
+        [Route("{roomId}/{amenityId}")]
+        public async Task<IActionResult> AddAmenityToRoom(int roomId, int amenityId)
+        {
+            await _room.AddAmenityToRoom(roomId, amenityId);
+            return NoContent();
         }
 
         // DELETE: api/Rooms/5
+        [Authorize(Policy = "deleteRoom")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoom(int id)
         {
             await _room.Delete(id);
-            return NoContent();
-        }
-        //--------------------------------------------------------------------------------------------//
-
-        //POST AMENITY:
-        [HttpPost]
-        [Route("{roomId}/Amenity/{amenityId}")]
-        public async Task<IActionResult> AddRoomAmenity(int roomId, int amenityId)
-        {
-            await _room.AddAmenity(roomId, amenityId);
-            return NoContent();
-        }
-        //Delete Amenity:
-        [HttpDelete("{id}")]
-        [Route("{roomId}/{amenityId}")]
-        public async Task<IActionResult> RemoveAmenityFromRoom(int roomId, int amenityId)
-        {
-            await _room.RemoveAmenity(roomId, amenityId);
             return NoContent();
         }
     }

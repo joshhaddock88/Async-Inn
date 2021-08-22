@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AsyncInn.Data;
 using AsyncInn.Models;
 using AsyncInn.Models.Interfaces;
+using AsyncInn.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AsyncInn.Controllers
 {
@@ -25,7 +27,7 @@ namespace AsyncInn.Controllers
 
         // GET: api/Amenities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Amenity>>> GetAmenities()
+        public async Task<ActionResult<IEnumerable<AmenityDTO>>> GetAmenities()
         {
             // You should count the list ...
             var list = await _amenity.GetAmenities();
@@ -34,16 +36,17 @@ namespace AsyncInn.Controllers
 
         // GET: api/Amenities/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Amenity>> GetAmenity(int id)
+        public async Task<ActionResult<AmenityDTO>> GetAmenity(int id)
         {
-            Amenity amenity = await _amenity.GetAmenity(id);
+            AmenityDTO amenity = await _amenity.GetAmenity(id);
             return amenity;
         }
 
         // PUT: api/Amenities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "updateAmenity")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAmenity(int id, Amenity amenity)
+        public async Task<IActionResult> PutRoom(int id, Amenity amenity)
         {
             if (id != amenity.Id)
             {
@@ -57,19 +60,21 @@ namespace AsyncInn.Controllers
 
         // POST: api/Amenities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Policy = "createAmenity")]
         [HttpPost]
-        public async Task<ActionResult<Amenity>> PostAmenity(Amenity amenity)
+        public async Task<ActionResult<AmenityDTO>> PostAmenity(NewAmenityDTO amenity)
         {
-            await _amenity.Create(amenity);
+            AmenityDTO newAmenity = await _amenity.Create(amenity);
 
             // Return a 201 Header to browser
             // The body of the request will be us running GetAmenity(id);
-            return CreatedAtAction("GetAmenity", new { id = amenity.Id }, amenity);
+            return CreatedAtAction("PostAmenity", new { id = newAmenity.Id }, newAmenity);
         }
 
         // DELETE: api/Amenities/5
+        [Authorize(Policy = "deleteAmenity")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAmenity(int id)
+        public async Task<IActionResult> DeleteRoom(int id)
         {
             await _amenity.Delete(id);
             return NoContent();
