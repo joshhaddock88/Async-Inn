@@ -11,24 +11,19 @@ namespace AsyncInn.Data
 {
     public class AsyncInnDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<Hotel> Hotels { get; set; }
-        
-        public DbSet<Room> Rooms { get; set; }
-
-        public DbSet<Amenity> Amenities { get; set; }
-
-        public DbSet<HotelRoom> HotelRooms { get; set; }
-
-        public DbSet<RoomAmenity> RoomAmenities { get; set; }
-
         public AsyncInnDbContext(DbContextOptions options) : base(options)
         {
         }
+        public DbSet<Hotel> Hotels { get; set; }        
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<HotelRoom> HotelRooms { get; set; }
+        public DbSet<RoomAmenity> RoomAmenities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // This calls the base method, but does nothing
-            // base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Hotel>().HasData(
               new Hotel { Id = 1, Name = "Async Emerald", StreetAddress = "116 1st Ave", State = "WA", City = "Seattle", Country = "USA", Phone = "(555)555-5555" },
@@ -49,18 +44,24 @@ namespace AsyncInn.Data
             );
 
             SeedRole(modelBuilder, "Regional manager", "createRoom", "createAmenity", "createHotel",
-                "updateRoom", "updateAmenity", "updateHotel", "deleteRoom", "deleteAmenity", "deleteHotel"
-                );
+                "updateRoom", "updateAmenity", "updateHotel", "deleteRoom", "deleteAmenity", "deleteHotel");
 
-            SeedRole(modelBuilder, "Property Manager", "createRoom", "createAmenity", "updateRoom", "updateAmenity", "deleteAmenity");
+            SeedRole(modelBuilder, "Property Manager", "createRoom", "createAmenity", "updateRoom", 
+                "updateAmenity", "deleteAmenity");
 
-            SeedRole(modelBuilder, "Shift Manager", "createAmenity", "updateRoom", "updateAmeniy", "deleteAmenity");
+            SeedRole(modelBuilder, "Agent", "createAmenity", "updateRoom", "updateAmenity", 
+                "deleteAmenity");
 
             modelBuilder.Entity<HotelRoom>().HasKey(
-                roomAmenity => new {roomAmenity.RoomId, roomAmenity.AmenityId}
+                hotelRoom => new {hotelRoom.RoomId, hotelRoom.HotelId}
             );
+
+            modelBuilder.Entity<RoomAmenity>().HasKey(
+                    roomAmenity => new { roomAmenity.RoomId, roomAmenity.AmenityId}
+                );
         }
 
+        private int nextId = 1;
         public void SeedRole(ModelBuilder modelBuilder, string roleName, params string[] permission)
         {
             var role = new IdentityRole
@@ -76,7 +77,7 @@ namespace AsyncInn.Data
             var roleClaims = permission.Select(permission =>
                 new IdentityRoleClaim<string>
                 {
-                    Id = 1,
+                    Id = nextId++,
                     RoleId = role.Id,
                     ClaimType = "permissions",
                     ClaimValue = permission

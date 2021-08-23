@@ -18,20 +18,7 @@ namespace AsyncInn
         {
             var host = CreateHostBuilder(args).Build();
 
-            UpdateDatabase(host.Services);
-
             host.Run();
-        }
-
-        private static void UpdateDatabase(IServiceProvider services)
-        {
-            using (var servicesScope = services.CreateScope())
-            {
-                using (var db = servicesScope.ServiceProvider.GetService<AsyncInnDbContext>())
-                {
-                    db.Database.Migrate();
-                }
-            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

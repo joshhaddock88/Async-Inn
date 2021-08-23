@@ -12,7 +12,7 @@ namespace AsyncInn.Models.Services
     public class AmenityService : IAmenity
     {
 
-        private AsyncInnDbContext _context;
+        private readonly AsyncInnDbContext _context;
 
         public AmenityService(AsyncInnDbContext context)
         {
@@ -21,14 +21,14 @@ namespace AsyncInn.Models.Services
 
         public async Task<AmenityDTO> Create(NewAmenityDTO amenity)
         {
-            Amenity newAmenity = new Amenity()
+            Amenity newAmenity = new()
             {
                 Name = amenity.Name
             };
             
             _context.Entry(newAmenity).State = EntityState.Added;
 
-            AmenityDTO addedAmenity = new AmenityDTO()
+            AmenityDTO addedAmenity = new()
             {
                 Name = amenity.Name
             };
