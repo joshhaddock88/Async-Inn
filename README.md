@@ -95,6 +95,8 @@ To do:
 
 ## Acknowledgements
 
+Recieved Assistance on this project from: Jona Brown, Steven Boston, Benjamin Ibarra
+
 ## Contact
 
 Created by [Joshua Haddock](https://www.linkedin.com/in/joshuahaddock/) - feel free to contact me!
