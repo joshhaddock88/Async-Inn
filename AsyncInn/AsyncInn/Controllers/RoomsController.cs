@@ -77,7 +77,7 @@ namespace AsyncInn.Controllers
         [Route("{roomId}/{amenityId}")]
         public async Task<IActionResult> AddAmenityToRoom(int roomId, int amenityId)
         {
-            await _room.AddAmenityToRoom(roomId, amenityId);
+            await _room.AddAmenity(roomId, amenityId);
             return NoContent();
         }
 
