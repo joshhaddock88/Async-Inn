@@ -105,7 +105,7 @@ namespace AsyncInn
 
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/api.v1/swagger.json", "Async Inn Demo");
+                options.SwaggerEndpoint("/api/v1/swagger.json", "Async Inn Demo");
                 options.RoutePrefix = "";
             });
 
